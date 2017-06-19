@@ -80,3 +80,7 @@ form.link, form.button {
     border-bottom: 0;
   }
 }
+
+.help-block {
+    color: red
+}
