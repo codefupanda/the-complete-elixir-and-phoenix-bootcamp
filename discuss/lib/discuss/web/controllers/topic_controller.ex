@@ -1,7 +1,11 @@
 defmodule Discuss.Web.TopicController do
     use Discuss.Web, :controller
-
     alias Discuss.Topic
+
+    plug Discuss.Web.Plug.RequireUser 
+            when action in [:new, :create, :edit, :update, :delete]
+    plug :check_topic_owner
+            when action in [:update, :edit, :delete]
 
     def index(conn, _params) do
         topics = Topic.findAll()
@@ -14,7 +18,7 @@ defmodule Discuss.Web.TopicController do
     end
 
     def create(conn, %{"topic" => topic} = _params) do
-        case Topic.save(topic) do
+        case Topic.save(conn.assigns.user, topic) do
             {:ok, _topic} -> conn
                             |> put_flash(:info, "Topic created successfully")
                             |> redirect(to: topic_path(conn, :index))
@@ -47,5 +51,19 @@ defmodule Discuss.Web.TopicController do
         conn
         |> put_flash(:info, "Deleted")
         |> redirect(to: topic_path(conn, :index))
+    end
+
+    def check_topic_owner(conn, _params) do
+        %{params: %{"id" => topic_id}} = conn
+        topic = Topic.get(topic_id)
+
+        if topic == nil || topic.user_id != conn.assigns.user.id do
+            conn
+            |> put_flash(:error, "Not your topic")
+            |> redirect(to: topic_path(conn, :index))
+            |> halt()
+        else 
+            conn
+        end
     end
 end

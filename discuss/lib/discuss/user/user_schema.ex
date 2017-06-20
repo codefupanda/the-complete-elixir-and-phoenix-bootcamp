@@ -5,6 +5,7 @@ defmodule Discuss.User.Schema.User do
         field :email, :string
         field :provider, :string
         field :token, :string
+        has_many :topics, Discuss.Topic.Schema.Topic
     end
 
     def changeset(schema, params \\ %{}) do

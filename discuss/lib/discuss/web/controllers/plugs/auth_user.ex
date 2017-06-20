@@ -1,4 +1,4 @@
-defmodule Discuss.Plug.ValidateUser do
+defmodule Discuss.Web.Plug.ValidateUser do
     import Plug.Conn
     import Phoenix.Controller
 

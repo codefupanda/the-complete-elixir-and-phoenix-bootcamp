@@ -9,9 +9,9 @@ defmodule Discuss.Topic do
         Discuss.Repo.get(TopicSchema, id)
     end
 
-    def save(params) do
-        %TopicSchema{}
-        |> TopicSchema.changeset(params)
+    def save(user, params) do
+        user
+        |> TopicSchema.changeset_assoc(params)
         |> Discuss.Repo.insert
     end
 
